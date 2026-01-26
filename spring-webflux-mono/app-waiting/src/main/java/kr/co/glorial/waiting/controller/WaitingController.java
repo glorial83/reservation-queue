@@ -14,10 +14,14 @@ public class WaitingController {
 
     private final WaitingService service;
 
-    @GetMapping("append")
-    public WaitingInfo append(AppendUserDTO appendUser) {
-        WaitingInfo waitingInfo = service.appendWaitingAndRank(appendUser);
-        return waitingInfo;
+    @GetMapping("position")
+    public WaitingInfo position(String identifier, String userId) {
+        log.info("userId================> : {}", userId);
+
+        long rank = service.retrieveWaitRank(identifier, userId);
+        long totalRank = service.retrieveTotalRank(identifier);
+
+        return WaitingInfo.builder().position(rank).total(totalRank).userId(userId).build();
     }
 
 }

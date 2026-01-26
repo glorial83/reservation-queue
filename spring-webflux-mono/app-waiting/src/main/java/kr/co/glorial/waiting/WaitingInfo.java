@@ -22,4 +22,7 @@ public class WaitingInfo {
 
     // 대기순번
     private long position;
+
+    // 전체
+    private long total;
 }

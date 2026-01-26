@@ -57,7 +57,7 @@ public class RedisTest {
         WaitingInfo waitingInfo = service.appendWaiting(identifier, userId, time);
         log.info("사용자:{}", waitingInfo);
 
-        long rank = service.retrieveWaitRank(waitingInfo);
+        long rank = service.retrieveWaitRank(identifier, userId);
         assertThat(rank).isGreaterThanOrEqualTo(0L);
         log.info("사용자 순번 :{}", rank);
     }
@@ -118,10 +118,18 @@ public class RedisTest {
     void LUA_FROM_EXECUTOR_등록() {
         var time = Instant.now().toEpochMilli();
         var identifier = "default";
-        var userId = "LUA_" + UUID.randomUUID().toString();
 
-        WaitingInfo waitingInfo = service.appendWaitingAndRank(identifier, userId, time);
+        WaitingInfo waitingInfo = service.appendWaitingAndRank(identifier, time);
         log.info("사용자:{}", waitingInfo);
+    }
+
+    @Order(5)
+    @Test
+    void 전체갯수() {
+        var identifier = "default";
+        long totalRank = service.retrieveTotalRank(identifier);
+        assertThat(totalRank).isGreaterThanOrEqualTo(1L);
+        log.info("전체갯수:{}", totalRank);
     }
 
 }

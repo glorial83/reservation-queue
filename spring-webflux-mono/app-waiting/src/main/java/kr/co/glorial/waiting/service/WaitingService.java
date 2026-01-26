@@ -34,15 +34,26 @@ public class WaitingService {
     }
 
     // 대기열 순번 조회
-    public long retrieveWaitRank(WaitingInfo waitingInfo) {
-        var key = USER_QUEUE_WAIT_KEY.formatted(waitingInfo.getIdentifier());
-        Long rank = redisTemplate.opsForZSet().rank(key, waitingInfo.getUserId());
+    public long retrieveWaitRank(String identifier, String userId) {
+        var key = USER_QUEUE_WAIT_KEY.formatted(identifier);
+        Long rank = redisTemplate.opsForZSet().rank(key, userId);
 
         if (rank == null) {
             return -1L;
         }
 
         return rank + 1;
+    }
+
+    public long retrieveTotalRank(String identifier) {
+        var key = USER_QUEUE_WAIT_KEY.formatted(identifier);
+        Long totalRank = redisTemplate.opsForZSet().zCard(key);
+
+        if (totalRank == null) {
+            return -1L;
+        }
+
+        return totalRank;
     }
 
     // 대기열 등록 + 순번
