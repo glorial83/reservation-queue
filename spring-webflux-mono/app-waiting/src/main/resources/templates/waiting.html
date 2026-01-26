@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>접속자대기열시스템</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .message {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <h1>접속량이 많습니다.</h1>
+        <span>현재 대기 순번 </span>
+        <span id="position">0</span><span>번째 입니다.</span>
+        <br/>
+        <span>내 뒤에 </span>
+        <span id="behind">0</span><span>명 입니다.</span>
+        <br/>
+
+        <p>서버의 접속량이 많아 시간이 걸릴 수 있습니다.</p>
+        <p>잠시만 기다려주세요.</p>
+        <p id="updated"></p>
+        <br/>
+    </div>
+
+    <div id="hiddenLayer">
+        <input type="text" th:name="returnUrl" th:value="${returnUrl}"/>
+    </div>
+
+    <script th:inline="javascript">
+        const DURATION = 3000;
+        const userId =  [[${waitingInfo.userId}]];
+        const identifier =  [[${waitingInfo.identifier}]];
+
+        function update() {
+            const params = new URLSearchParams({userId, identifier});
+            fetch("/position?" + params).then((response) => {
+                return response.json();
+            }).then((data) => {
+                document.querySelector('#position').innerHTML = data.position;
+                document.querySelector('#behind').innerHTML = parseInt(data.total) - parseInt(data.position);
+                document.querySelector('#updated').innerHTML = new Date();
+            });
+        }
+
+        setInterval(update, DURATION);
+    </script>
+</body>
+</html>

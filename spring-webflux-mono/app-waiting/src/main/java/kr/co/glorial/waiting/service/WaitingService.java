@@ -8,8 +8,8 @@ import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -46,29 +46,18 @@ public class WaitingService {
     }
 
     // 대기열 등록 + 순번
-    public WaitingInfo appendWaitingAndRank(String identifier, String userId, long timestamp) {
-        var time = Instant.now().toEpochMilli();
+    public WaitingInfo appendWaitingAndRank(String identifier, long timestamp) {
+        var userId = UUID.randomUUID().toString();
         var key = USER_QUEUE_WAIT_KEY.formatted(identifier);
 
-        long rank = luaScriptExecutor.execute("redis/waiting_queue_append_and_rank.lua", ReturnType.INTEGER, Collections.singletonList(key), userId, String.valueOf(time));
+        long rank = luaScriptExecutor.execute("redis/waiting_queue_append_and_rank.lua", ReturnType.INTEGER, Collections.singletonList(key), userId, String.valueOf(timestamp));
         rank += 1;
 
         return WaitingInfo.builder().userId(userId).identifier(identifier).timestamp(timestamp).position(rank).build();
     }
 
+    // 대기열 등록 + 순번
     public WaitingInfo appendWaitingAndRank(AppendUserDTO appendUser) {
-        var key = USER_QUEUE_WAIT_KEY.formatted(appendUser.getSystemName());
-
-        long rank = luaScriptExecutor.execute("redis/waiting_queue_append_and_rank.lua", ReturnType.INTEGER,
-                Collections.singletonList(key),
-                appendUser.getUserId(),
-                String.valueOf(appendUser.getTimestamp()));
-        rank += 1;
-
-        return WaitingInfo.builder()
-                .userId(appendUser.getUserId())
-                .identifier(appendUser.getSystemName())
-                .timestamp(appendUser.getTimestamp())
-                .position(rank).build();
+        return appendWaitingAndRank(appendUser.getSystemName(), appendUser.getTimestamp());
     }
 }

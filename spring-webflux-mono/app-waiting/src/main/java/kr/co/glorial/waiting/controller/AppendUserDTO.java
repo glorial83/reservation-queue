@@ -10,8 +10,8 @@ import java.time.Instant;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 public class AppendUserDTO {
-    private String userId;
     private String systemName;
+    private String returnUrl;
 
     @Setter(AccessLevel.NONE)
     private final long timestamp = Instant.now().toEpochMilli();
