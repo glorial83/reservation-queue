@@ -2,6 +2,7 @@ package kr.co.glorial.waiting.service;
 
 import kr.co.glorial.waiting.WaitingInfo;
 import kr.co.glorial.waiting.config.LuaScriptExecutor;
+import kr.co.glorial.waiting.controller.AppendUserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -55,4 +56,19 @@ public class WaitingService {
         return WaitingInfo.builder().userId(userId).identifier(identifier).timestamp(timestamp).position(rank).build();
     }
 
+    public WaitingInfo appendWaitingAndRank(AppendUserDTO appendUser) {
+        var key = USER_QUEUE_WAIT_KEY.formatted(appendUser.getSystemName());
+
+        long rank = luaScriptExecutor.execute("redis/waiting_queue_append_and_rank.lua", ReturnType.INTEGER,
+                Collections.singletonList(key),
+                appendUser.getUserId(),
+                String.valueOf(appendUser.getTimestamp()));
+        rank += 1;
+
+        return WaitingInfo.builder()
+                .userId(appendUser.getUserId())
+                .identifier(appendUser.getSystemName())
+                .timestamp(appendUser.getTimestamp())
+                .position(rank).build();
+    }
 }

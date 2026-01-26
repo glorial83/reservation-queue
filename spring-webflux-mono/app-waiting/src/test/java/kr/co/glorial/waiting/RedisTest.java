@@ -1,6 +1,5 @@
 package kr.co.glorial.waiting;
 
-import kr.co.glorial.waiting.config.LuaScriptExecutor;
 import kr.co.glorial.waiting.config.LuaScriptRegistry;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +37,6 @@ public class RedisTest {
 
     @Autowired
     private LuaScriptRegistry luaScriptRegistry;
-
-    @Autowired
-    private LuaScriptExecutor luaScriptExecutor;
 
     @BeforeAll
     void before() {
