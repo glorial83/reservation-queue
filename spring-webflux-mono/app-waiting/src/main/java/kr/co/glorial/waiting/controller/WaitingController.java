@@ -6,6 +6,7 @@ import kr.co.glorial.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -30,6 +31,16 @@ public class WaitingController {
         long totalRank = service.retrieveTotalRank(identifier);
 
         return WaitingInfo.builder().allowed(false).position(rank).total(totalRank).userId(userId).build();
+    }
+
+    @GetMapping("verify")
+    public WaitingInfo verify(VerifyUserDTO verifyUser) {
+        String returnSystemName = service.retrieveEntryKey(verifyUser.getSystemName(),verifyUser.getUserId());
+        if (returnSystemName == null) {
+            return WaitingInfo.builder().allowed(false).build();
+        }
+
+        return WaitingInfo.builder().allowed(true).build();
     }
 
 }

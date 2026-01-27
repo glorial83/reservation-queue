@@ -1,6 +1,7 @@
 package kr.co.glorial.booking.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.glorial.booking.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,23 +24,25 @@ public class IndexController {
 
     private String systemName = "booking";
 
+    private final AuthService service;
+
     @GetMapping("/")
     public String index(
             @RequestParam(required = false, defaultValue = "none", name = "entryTicket") String entryTicket,
             HttpServletResponse response
     ) {
-        // 대기 사이트로 이동
-        if ("none".equals(entryTicket)) {
-            log.info("입장 티켓이 없습니다.");
-
-            return "redirect:%s/waiting?systemName=%s&returnUrl=%s".formatted(
-                    waitingHost,
-                    systemName,
-                    bookingHost);
+        // 토큰 검증 후 예약 페이지로 이동
+        if (!"none".equals(entryTicket) && service.checkEntryTicket(entryTicket)) {
+            return "booking";
         }
 
-        // 토큰 검증 후 예약 페이지로 이동
-        return "booking";
+        // 대기 사이트로 이동
+        log.info("입장 티켓이 없습니다.");
+
+        return "redirect:%s/waiting?systemName=%s&returnUrl=%s".formatted(
+                waitingHost,
+                systemName,
+                bookingHost);
     }
 
     // Index 접속 -> 티켓 유 -> 대기
