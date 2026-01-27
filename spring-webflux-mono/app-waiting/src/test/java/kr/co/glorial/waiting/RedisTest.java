@@ -129,4 +129,15 @@ public class RedisTest {
         log.info("전체갯수:{}", totalRank);
     }
 
+    @Order(6)
+    @Test
+    void 대기열_탈락() {
+        var USER_QUEUE_WAIT_KEY = "waiting:queue:%s:wait";
+        var key = USER_QUEUE_WAIT_KEY.formatted(identifier);
+        var userId = UUID.randomUUID().toString();
+
+        Long rank = redisTemplate.opsForZSet().rank(key, userId);
+        assertThat(rank).isNull();
+    }
+
 }
