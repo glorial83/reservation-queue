@@ -16,7 +16,7 @@ public class WaitingController {
     private final WaitingService service;
 
     @GetMapping("position")
-    public WaitingInfo position(String identifier, String userId) {
+    public WaitingInfo position(@RequestParam(name = "identifier") String identifier, @RequestParam(name = "userId") String userId) {
         // 입장허가 조회
         String returnSystemName = service.retrieveEntryKey(identifier, userId);
         if (returnSystemName != null) {
