@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -24,7 +25,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(
-            @CookieValue(value = "entry-ticket", defaultValue = "none") String entryTicket,
+            @RequestParam(required = false, defaultValue = "none", name = "entryTicket") String entryTicket,
             HttpServletResponse response
     ) {
         // 대기 사이트로 이동

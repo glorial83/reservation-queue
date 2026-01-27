@@ -1,6 +1,7 @@
 package kr.co.glorial.waiting.controller;
 
 import kr.co.glorial.waiting.WaitingInfo;
+import kr.co.glorial.waiting.service.SystemReturnUrl;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +17,19 @@ public class WaitingController {
 
     @GetMapping("position")
     public WaitingInfo position(String identifier, String userId) {
+        // 입장허가 조회
+        String returnSystemName = service.retrieveEntryKey(identifier, userId);
+        if (returnSystemName != null) {
+            // 입장허가된 사용자
+            String returnUrl = SystemReturnUrl.fromSiteName(returnSystemName).getUrl();
+            return WaitingInfo.builder().allowed(true).userId(userId).returnUrl(returnUrl).build();
+        }
+
+        // 대기열 사용자
         long rank = service.retrieveWaitRank(identifier, userId);
         long totalRank = service.retrieveTotalRank(identifier);
 
-        return WaitingInfo.builder().position(rank).total(totalRank).userId(userId).build();
+        return WaitingInfo.builder().allowed(false).position(rank).total(totalRank).userId(userId).build();
     }
 
 }

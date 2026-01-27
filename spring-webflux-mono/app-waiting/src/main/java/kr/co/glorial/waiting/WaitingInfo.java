@@ -25,4 +25,10 @@ public class WaitingInfo {
 
     // 전체
     private long total;
+
+    // 입장허가
+    private boolean allowed;
+
+    // 리턴URL
+    private String returnUrl;
 }

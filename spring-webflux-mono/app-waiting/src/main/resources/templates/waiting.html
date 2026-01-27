@@ -54,11 +54,24 @@
         function update() {
             const params = new URLSearchParams({userId, identifier});
             fetch("/position?" + params).then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
+                }
                 return response.json();
             }).then((data) => {
-                document.querySelector('#position').innerHTML = data.position;
-                document.querySelector('#behind').innerHTML = parseInt(data.total) - parseInt(data.position);
-                document.querySelector('#updated').innerHTML = new Date();
+                console.log("수신결과", data);
+
+                if (!data.allowed) {
+                    document.querySelector('#position').innerHTML = data.position;
+                    document.querySelector('#behind').innerHTML = parseInt(data.total) - parseInt(data.position);
+                    document.querySelector('#updated').innerHTML = new Date();
+                } else {
+                    location.href = data.returnUrl + "?" + "entryTicket=" + data.userId;
+                }
+            }).catch((error) => {
+                console.log(error);
+                alert('에러\r\n' + error);
+                location.reload();
             });
         }
 

@@ -49,7 +49,7 @@ public class WaitingService {
         Long rank = redisTemplate.opsForZSet().rank(key, userId);
 
         if (rank == null) {
-            return -1L;
+            throw new IllegalStateException("허가되지 않은 사용자입니다");
         }
 
         return rank + 1;
@@ -112,5 +112,20 @@ public class WaitingService {
         log.info("이동결과 : {}", moveResult);
 
         return moveResult;
+    }
+
+    // 입장허가 조회
+    public String retrieveEntryKey(String identifier, String userId) {
+        String savedSystemName = redisTemplate.opsForValue().get(USER_QUEUE_ACTIVE_KEY.formatted(userId));
+
+        if (savedSystemName == null) {
+            return null;
+        }
+
+        if (!savedSystemName.equals(identifier)) {
+            throw new IllegalStateException("허가되지 않은 사용자입니다");
+        }
+
+        return savedSystemName;
     }
 }
