@@ -36,6 +36,7 @@
       2. 유효하지 않을경우?
       3. 대기가 아니라 active 사용자일 경우?
       4. 대기하던 중 새로고침 한 경우엔? -> 대기에서 탈락하는 경우가 대부분인데 왜 : cookie나 storage에 저장하지 않는다 그래서 휘발성이라 그렇다.
+      5. 대기하다가 나간 사람에 대한 처리는?
    7. (app-waiting) 대기 페이지로 이동
    8. (app-waiting) 사용자 UUID(userId) 로 대기열 1분단위 폴링
 
@@ -44,6 +45,12 @@
    1. `app-waiting` 에 유효성 검증 요청
    2. 올바르지 않을 경우 `app-waiting`으로 이동
 6. (app-booking) 예매 진행
+
+### 대기열 관리 배치
+
+1. 10초마다 대기열에서 `popMin` 을 진행 함 : 3건 ✔
+2. pop된 사용자를 `active` queue로 돌림 ✔
+3. `active` queue로 추가된 사용자의 `entry-ticket`을 발급
 
 ```
      Index 접속 -> 티켓 유 -> 대기
