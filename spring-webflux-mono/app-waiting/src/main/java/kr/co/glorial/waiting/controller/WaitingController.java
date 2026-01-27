@@ -16,8 +16,6 @@ public class WaitingController {
 
     @GetMapping("position")
     public WaitingInfo position(String identifier, String userId) {
-        log.info("userId================> : {}", userId);
-
         long rank = service.retrieveWaitRank(identifier, userId);
         long totalRank = service.retrieveTotalRank(identifier);
 

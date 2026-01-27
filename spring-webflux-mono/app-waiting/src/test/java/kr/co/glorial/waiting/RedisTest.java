@@ -38,6 +38,8 @@ public class RedisTest {
     @Autowired
     private LuaScriptRegistry luaScriptRegistry;
 
+    private final String identifier = "default";
+
     @BeforeAll
     void before() {
         ReactiveRedisConnection reactiveRedisConnection = reactiveRedisTemplate.getConnectionFactory().getReactiveConnection();
@@ -51,7 +53,6 @@ public class RedisTest {
     @Test
     void 등록_성공() {
         var time = Instant.now().toEpochMilli();
-        var identifier = "default";
         var userId = "Normal_" + UUID.randomUUID().toString();
 
         WaitingInfo waitingInfo = service.appendWaiting(identifier, userId, time);
@@ -78,7 +79,6 @@ public class RedisTest {
         luaScript.setResultType(Long.class);
 
         var time = Instant.now().toEpochMilli();
-        var identifier = "default";
         var userId = "LUA_" + UUID.randomUUID().toString();
 
         String USER_QUEUE_WAIT_KEY = "waiting:queue:%s:wait";
@@ -96,7 +96,6 @@ public class RedisTest {
         String script = luaScriptRegistry.getLuaScript("redis/waiting_queue_append_and_rank.lua");
 
         var time = Instant.now().toEpochMilli();
-        var identifier = "default";
         var userId = "LUA_" + UUID.randomUUID().toString();
 
         String USER_QUEUE_WAIT_KEY = "waiting:queue:%s:wait";
@@ -117,7 +116,6 @@ public class RedisTest {
     @Test
     void LUA_FROM_EXECUTOR_등록() {
         var time = Instant.now().toEpochMilli();
-        var identifier = "default";
 
         WaitingInfo waitingInfo = service.appendWaitingAndRank(identifier, time);
         log.info("사용자:{}", waitingInfo);
@@ -126,7 +124,6 @@ public class RedisTest {
     @Order(5)
     @Test
     void 전체갯수() {
-        var identifier = "default";
         long totalRank = service.retrieveTotalRank(identifier);
         assertThat(totalRank).isGreaterThanOrEqualTo(1L);
         log.info("전체갯수:{}", totalRank);
