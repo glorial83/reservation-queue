@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,8 +29,8 @@ public class RedisPopTest {
     private RedisTemplate<String, String> redisTemplate;
 
     private final String USER_QUEUE_WAIT_KEY = "waiting:queue:%s:wait"; // 프로젝트, 도메인, 식별자, 상태/속성
-    private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "waiting:queue:*:waitx"; // 프로젝트, 도메인, 식별자, 상태/속성
-    private final String USER_QUEUE_ACTIVE_KEY = "waiting:queue:%s:active"; // 프로젝트, 도메인, 식별자, 상태/속성
+    private final String USER_QUEUE_WAIT_KEY_FOR_SCAN = "waiting:queue:*:wait"; // 프로젝트, 도메인, 식별자, 상태/속성
+    private final String USER_QUEUE_ACTIVE_KEY = "waiting:queue:active:%s"; // 프로젝트, 도메인, 상태/속성, UUID
 
     private final String identifier = "default";
 
@@ -83,11 +84,13 @@ public class RedisPopTest {
                 .flatMap(systemName ->
                         redisTemplate.opsForZSet()
                                 .popMin(USER_QUEUE_WAIT_KEY.formatted(identifier), popSize)
-                                .stream().map(waitingQueue ->
-                                        redisTemplate.opsForZSet().add(
-                                                USER_QUEUE_ACTIVE_KEY.formatted(identifier),
-                                                Objects.requireNonNull(waitingQueue.getValue()),
-                                                Instant.now().toEpochMilli())
+                                .stream().map(waitingQueue -> {
+                                            redisTemplate.opsForValue().set(
+                                                    USER_QUEUE_ACTIVE_KEY.formatted(Objects.requireNonNull(waitingQueue.getValue())),
+                                                    identifier,
+                                                    1, TimeUnit.MINUTES);
+                                            return true;
+                                        }
                                 ))
                 .toList();
 
