@@ -16,11 +16,11 @@ public class AuthService {
     @Value("${waiting.host}")
     private String waitingHost;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public boolean checkEntryTicket(String entryTicket) {
         var uri = UriComponentsBuilder
-                .fromUriString("http://127.0.0.1:8091")
+                .fromUriString(waitingHost)
                 .path("/verify")
                 .queryParam("userId", entryTicket)
                 .queryParam("systemName", "booking")
@@ -31,7 +31,7 @@ public class AuthService {
         log.info("uri : {}", uri);
 
         ResponseEntity<WaitingInfo> response = restTemplate.getForEntity(uri, WaitingInfo.class);
-        log.info(response.getBody().toString());
+        log.info(String.valueOf(response.getBody()));
 
         return response.getBody().isAllowed();
     }
