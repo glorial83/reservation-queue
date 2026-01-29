@@ -1,4 +1,4 @@
-package kr.co.glorial.waiting.config;
+package kr.co.glorial.waiting.lua;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.ReturnType;

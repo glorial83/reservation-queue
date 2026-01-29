@@ -1,6 +1,7 @@
 package kr.co.glorial.waiting;
 
-import kr.co.glorial.waiting.config.LuaScriptRegistry;
+import kr.co.glorial.waiting.lua.LuaScriptRegistry;
+import kr.co.glorial.waiting.dto.response.WaitingResponse;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -55,8 +56,8 @@ public class RedisTest {
         var time = Instant.now().toEpochMilli();
         var userId = "Normal_" + UUID.randomUUID().toString();
 
-        WaitingInfo waitingInfo = service.appendWaiting(identifier, userId, time);
-        log.info("사용자:{}", waitingInfo);
+        WaitingResponse waitingResponse = service.appendWaiting(identifier, userId, time);
+        log.info("사용자:{}", waitingResponse);
 
         long rank = service.retrieveWaitRank(identifier, userId);
         assertThat(rank).isGreaterThanOrEqualTo(0L);
@@ -117,8 +118,8 @@ public class RedisTest {
     void LUA_FROM_EXECUTOR_등록() {
         var time = Instant.now().toEpochMilli();
 
-        WaitingInfo waitingInfo = service.appendWaitingAndRank(identifier, time);
-        log.info("사용자:{}", waitingInfo);
+        WaitingResponse waitingResponse = service.appendWaitingAndRank(identifier, time);
+        log.info("사용자:{}", waitingResponse);
     }
 
     @Order(5)

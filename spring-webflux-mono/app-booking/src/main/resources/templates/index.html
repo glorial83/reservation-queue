@@ -1,11 +1,49 @@
 <!doctype html>
-<html lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>예매시스템</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
-    Hello World!
+    <script th:inline="javascript">
+        const urlParams = {};
+        (function () {
+            let match,
+                pl     = /\+/g,
+                search = /([^&=]+)=?([^&]*)/g,
+                decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+                query  = window.location.search.substring(1);
+            while (match = search.exec(query)) { urlParams[decode(match[1])] = decode(match[2]); }
+        })();
+
+        function update() {
+            fetch(`/api/check?entryTicket=${urlParams.entryTicket}`).then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
+                }
+                return response.json();
+            }).then((data) => {
+                console.log("수신결과", data);
+                location.href = data.returnUrl;
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+
+        setTimeout(update, 100);
+    </script>
 </body>
 </html>

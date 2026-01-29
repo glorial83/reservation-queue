@@ -1,4 +1,4 @@
-package kr.co.glorial.waiting.controller;
+package kr.co.glorial.waiting.dto.request;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class AppendUserDTO {
+public class AppendUserRequest {
     private String systemName;
     private String returnUrl;
 

@@ -1,5 +1,6 @@
 package kr.co.glorial.waiting;
 
+import kr.co.glorial.waiting.service.WaitingBatchService;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -36,6 +37,9 @@ public class RedisPopTest {
 
     @Autowired
     private WaitingService service;
+
+    @Autowired
+    private WaitingBatchService batchService;
 
     @BeforeAll
     void before() {
@@ -101,8 +105,7 @@ public class RedisPopTest {
     @DisplayName("pop된 사용자를 `active` queue로 돌림(서비스)")
     @Test
     void WAIT_TO_ACTIVE_SERVICE() {
-        List<Boolean> moveResult = service.moveWaitToActive();
-
+        List<Boolean> moveResult = batchService.moveWaitToActive();
         assertThat(moveResult).size().isEqualTo(3L);
     }
 }

@@ -1,4 +1,4 @@
-package kr.co.glorial.waiting;
+package kr.co.glorial.waiting.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class WaitingInfo {
+public class WaitingResponse {
 
     // 식별자
     private String identifier;
@@ -17,7 +17,7 @@ public class WaitingInfo {
     // 사용자 UUID
     private String userId;
 
-    // 입장시간
+    // 최초대기시간
     private long timestamp;
 
     // 대기순번

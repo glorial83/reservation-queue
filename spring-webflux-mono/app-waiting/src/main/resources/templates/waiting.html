@@ -42,14 +42,10 @@
         <br/>
     </div>
 
-    <div id="hiddenLayer">
-        <input type="text" th:name="returnUrl" th:value="${returnUrl}"/>
-    </div>
-
     <script th:inline="javascript">
         const DURATION = 3000;
-        const userId =  [[${waitingInfo.userId}]];
-        const identifier =  [[${waitingInfo.identifier}]];
+        const userId =  [[${waitingResponse.userId}]];
+        const identifier =  [[${waitingResponse.identifier}]];
 
         function update() {
             const params = new URLSearchParams({userId, identifier});
@@ -66,7 +62,7 @@
                     document.querySelector('#behind').innerHTML = parseInt(data.total) - parseInt(data.position);
                     document.querySelector('#updated').innerHTML = new Date();
                 } else {
-                    location.href = data.returnUrl + "?" + "entryTicket=" + data.userId;
+                    location.href = data.returnUrl;
                 }
             }).catch((error) => {
                 console.log(error);

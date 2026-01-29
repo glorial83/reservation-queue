@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SystemReturnUrl {
 
-    DEFAULT("default", "http://127.0.0.1:8080/"),
-    BOOKING("booking", "http://127.0.0.1:8090/"),
+    DEFAULT("default", "http://test.default.com:8090"),
+    BOOKING("booking", "http://test.reservation.com:8090"),
     ;
 
     private final String siteName;

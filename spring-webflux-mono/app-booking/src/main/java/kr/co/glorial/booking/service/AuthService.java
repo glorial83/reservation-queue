@@ -1,5 +1,6 @@
 package kr.co.glorial.booking.service;
 
+import kr.co.glorial.booking.dto.response.VerifyEntryKeyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,21 +17,23 @@ public class AuthService {
     @Value("${waiting.host}")
     private String waitingHost;
 
+    private String systemName = "booking";
+
     private final RestTemplate restTemplate;
 
-    public boolean checkEntryTicket(String entryTicket) {
+    public boolean verifyEntryKey(String entryTicket) {
         var uri = UriComponentsBuilder
                 .fromUriString(waitingHost)
                 .path("/verify")
                 .queryParam("userId", entryTicket)
-                .queryParam("systemName", "booking")
+                .queryParam("identifier", systemName)
                 .encode()
                 .build()
                 .toUri();
 
         log.info("uri : {}", uri);
 
-        ResponseEntity<WaitingInfo> response = restTemplate.getForEntity(uri, WaitingInfo.class);
+        ResponseEntity<VerifyEntryKeyResponse> response = restTemplate.getForEntity(uri, VerifyEntryKeyResponse.class);
         log.info(String.valueOf(response.getBody()));
 
         return response.getBody().isAllowed();

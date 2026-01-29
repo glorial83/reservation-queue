@@ -1,7 +1,8 @@
 package kr.co.glorial.waiting.controller;
 
-import kr.co.glorial.waiting.WaitingInfo;
-import kr.co.glorial.waiting.service.SystemReturnUrl;
+import kr.co.glorial.waiting.dto.request.VerifyEntryKeyRequest;
+import kr.co.glorial.waiting.dto.response.VerifyEntryKeyResponse;
+import kr.co.glorial.waiting.dto.response.WaitingResponse;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,31 +17,34 @@ public class WaitingController {
 
     private final WaitingService service;
 
+    /**
+     * 대기열 사용자의 실시간 상태(순번 또는 입장허가 여부) 조회.
+     *
+     * @param identifier
+     * @param userId
+     * @return
+     */
     @GetMapping("position")
-    public WaitingInfo position(@RequestParam(name = "identifier") String identifier, @RequestParam(name = "userId") String userId) {
-        // 입장허가 조회
-        String returnSystemName = service.retrieveEntryKey(identifier, userId);
-        if (returnSystemName != null) {
-            // 입장허가된 사용자
-            String returnUrl = SystemReturnUrl.fromSiteName(returnSystemName).getUrl();
-            return WaitingInfo.builder().allowed(true).userId(userId).returnUrl(returnUrl).build();
+    public WaitingResponse position(@RequestParam(name = "identifier") String identifier, @RequestParam(name = "userId") String userId) {
+        // 입장허가 사용자일경우
+        WaitingResponse allowedInfo = service.retrieveEntryKey(identifier, userId);
+        if (allowedInfo != null) {
+            return allowedInfo;
         }
 
-        // 대기열 사용자
-        long rank = service.retrieveWaitRank(identifier, userId);
-        long totalRank = service.retrieveTotalRank(identifier);
-
-        return WaitingInfo.builder().allowed(false).position(rank).total(totalRank).userId(userId).build();
+        // 대기열 사용자일경우
+        return service.retrieveWaitAndTotalRank(identifier, userId);
     }
 
+    /**
+     * 입장토큰 검증.
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("verify")
-    public WaitingInfo verify(VerifyUserDTO verifyUser) {
-        String returnSystemName = service.retrieveEntryKey(verifyUser.getSystemName(),verifyUser.getUserId());
-        if (returnSystemName == null) {
-            return WaitingInfo.builder().allowed(false).build();
-        }
-
-        return WaitingInfo.builder().allowed(true).build();
+    public VerifyEntryKeyResponse verify(VerifyEntryKeyRequest request) {
+        return service.verifyEntryKey(request.getIdentifier(), request.getUserId());
     }
 
 }

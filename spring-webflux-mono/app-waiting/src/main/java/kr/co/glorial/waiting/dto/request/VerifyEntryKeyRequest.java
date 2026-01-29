@@ -1,15 +1,13 @@
-package kr.co.glorial.waiting.controller;
+package kr.co.glorial.waiting.dto.request;
 
 import lombok.*;
-
-import java.time.Instant;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class VerifyUserDTO {
+public class VerifyEntryKeyRequest {
     private String userId;
-    private String systemName;
+    private String identifier;
 }

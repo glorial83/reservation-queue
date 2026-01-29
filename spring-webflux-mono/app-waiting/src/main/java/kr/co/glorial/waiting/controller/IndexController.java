@@ -1,6 +1,7 @@
 package kr.co.glorial.waiting.controller;
 
-import kr.co.glorial.waiting.WaitingInfo;
+import kr.co.glorial.waiting.dto.request.AppendUserRequest;
+import kr.co.glorial.waiting.dto.response.WaitingResponse;
 import kr.co.glorial.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,11 @@ public class IndexController {
     private final WaitingService service;
 
     @GetMapping("waiting")
-    public String waiting(AppendUserDTO appendUser, Model model) {
-        WaitingInfo waitingInfo = service.appendWaitingAndRank(appendUser);
-        log.info("대기사용자:{}", waitingInfo);
+    public String waiting(AppendUserRequest appendUser, Model model) {
+        WaitingResponse waitingResponse = service.appendWaitingAndRank(appendUser);
+        log.info("대기사용자:{}", waitingResponse);
 
-        model.addAttribute("waitingInfo", waitingInfo);
-        model.addAttribute("returnUrl", appendUser.getReturnUrl());
+        model.addAttribute("waitingResponse", waitingResponse);
 
         return "waiting";
     }

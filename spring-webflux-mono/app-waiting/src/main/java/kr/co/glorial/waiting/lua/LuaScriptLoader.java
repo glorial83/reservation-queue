@@ -1,4 +1,4 @@
-package kr.co.glorial.waiting.config;
+package kr.co.glorial.waiting.lua;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
